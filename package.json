@@ -1,0 +1,17 @@
+{
+  "name": "test_postcard",
+  "version": "0.0.1",
+  "description": "Testing Lob API",
+  "main": "app.js",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "lob": "^6.1.1",
+    "readline-sync": "^1.4.10"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
