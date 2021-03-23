@@ -21,7 +21,7 @@ const validateAddress = () => {
       console.error(err);
       return;
     }
-    // Just print the verification object
+    // Just print the validation object
     console.log(res);
   });
 };
@@ -66,7 +66,7 @@ const addAddress = () => {
 // Show all addresses
 const listAddresses = () => {
   // All we have to do is hit the endpoint
-  Lob.addresses.list(null, (err, res) => {
+  return Lob.addresses.list(null, (err, res) => {
     // If error, print it and stop
     if (err) {
       console.log(err);
@@ -99,6 +99,42 @@ const printAddress = addy => {
   );
 };
 
+const sendCard = () => {
+  // Get ID of desired address
+  const toId = readline.question(
+    'Please enter the ID of the desired recipient: '
+  );
+
+  // Dear X,
+  const toName = readline.question(
+    'Please enter your preferred name for the recipient (if different than in address)'
+  );
+
+  // Get message
+  const message = readline.question(
+    'Please enter the message you want on the card: '
+  );
+
+  // Get sign-off
+  const valediction = readline.question(
+    'How do you want to sign off? (e.g. Best, Sincerely, Love, etc.)'
+  );
+
+  // What name should sign the card?
+  const fromName = readline.question(
+    'How should you sign the card? (e.g. Sam, Samwise, Mr. Gangee, etc.)'
+  );
+
+  // Send request
+  // TODO!
+  // For now, print info
+  console.log(
+    `Card with message "${message}" will be sent to the address with ID ${toId}`
+  );
+
+  // Confirm
+};
+
 // Gets input from command line
 // Takes array of strings representing field names
 // Returns object with key: val pairs in format field: response
@@ -126,6 +162,7 @@ const getInput = fields => {
   console.log('1: Verify an address');
   console.log('2: Create a new address');
   console.log('3: List all addresses');
+  console.log('4: Send a postcard');
 
   // Get input
   const action = readline.question(
@@ -142,6 +179,11 @@ const getInput = fields => {
       break;
     case '3':
       listAddresses();
+      break;
+    case '4':
+      listAddresses().then(x => {
+        sendCard();
+      });
       break;
     default:
       console.log("I'm sorry, that's an invalid option!");
