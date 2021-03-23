@@ -16,7 +16,13 @@ const validateAddress = () => {
 
   // Verify via API wrapper
   Lob.usVerifications.verify(address, function (err, res) {
-    console.log(err, res);
+    // If error, print it and stop
+    if (err) {
+      console.error(err);
+      return;
+    }
+    // Just print the verification object
+    console.log(res);
   });
 };
 
@@ -27,7 +33,7 @@ const addAddress = () => {
   const addressInput = getInput([
     'name',
     'address line 1',
-    'address line 2',
+    'address line 2 (optional)',
     'city',
     'state',
     'zip code',
@@ -37,7 +43,7 @@ const addAddress = () => {
   const formattedAddress = {
     name: addressInput.name,
     address_line1: addressInput['address line 1'],
-    address_line2: addressInput['address line 2'],
+    address_line2: addressInput['address line 2 (optional)'],
     address_city: addressInput.city,
     address_state: addressInput.state,
     address_zip: addressInput['zip code'],
@@ -46,8 +52,51 @@ const addAddress = () => {
 
   // Hit the API
   Lob.addresses.create(formattedAddress, (err, res) => {
-    console.log(err, res);
+    // If error, print it and stop
+    if (err) {
+      console.error(err);
+      return;
+    }
+    // Print success message and address info
+    console.log('\nNew address created!');
+    printAddress(res);
   });
+};
+
+// Show all addresses
+const listAddresses = () => {
+  // All we have to do is hit the endpoint
+  Lob.addresses.list(null, (err, res) => {
+    // If error, print it and stop
+    if (err) {
+      console.log(err);
+      return;
+    }
+    // Response object contains data array of address objects
+    res.data.forEach(a => {
+      // Print the address
+      printAddress(a);
+      // Blank line between addresses
+      console.log();
+    });
+  });
+};
+
+// Print one address
+// Takes address object as returned by API
+const printAddress = addy => {
+  // Format street address for printing
+  const streetAddy =
+    addy.address_line2 === null
+      ? addy.address_line1
+      : `${addy.address_line1}, ${addy.address_line2}`;
+
+  // Print output
+  console.log(`ID: ${addy.id}`);
+  console.log(`Name: ${addy.name}`);
+  console.log(
+    `Address: \n ${streetAddy} \n ${addy.address_city}, ${addy.address_state} ${addy.address_zip}`
+  );
 };
 
 // Gets input from command line
@@ -76,6 +125,7 @@ const getInput = fields => {
   console.log('Here are the things you can do:');
   console.log('1: Verify an address');
   console.log('2: Create a new address');
+  console.log('3: List all addresses');
 
   // Get input
   const action = readline.question(
@@ -89,6 +139,9 @@ const getInput = fields => {
       break;
     case '2':
       addAddress();
+      break;
+    case '3':
+      listAddresses();
       break;
     default:
       console.log("I'm sorry, that's an invalid option!");
